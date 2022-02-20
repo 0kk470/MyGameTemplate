@@ -1,0 +1,13 @@
+[
+  {
+    "id": 10001,
+    "name": "黑-利刃",
+    "type": "黑",
+    "AttackMult": 0.5,
+    "NumberAdd": 0,
+    "SizeMult": 0,
+    "SpeedMult": 0,
+    "RateMult": 0,
+    "Describe": "攻击力\u002B50%"
+  }
+]

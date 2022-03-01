@@ -15,6 +15,8 @@ namespace Saltyfish.Resource
 
         public static AssetCache Default { get; private set; } = new AssetCache("Default");
 
+        private static Dictionary<string, AssetCache> m_AllCache = new Dictionary<string, AssetCache>();
+
 
         private string m_CacheName;
 
@@ -32,6 +34,17 @@ namespace Saltyfish.Resource
         {
             return new AssetCache(cacheName);
         }
+
+        public static AssetCache Get(string cacheName)
+        {
+            if(!m_AllCache.TryGetValue(cacheName, out AssetCache result))
+            {
+                result = CreateCache(cacheName);
+                m_AllCache.Add(cacheName, result);
+            }
+            return result;
+        }
+
 
         public T GetAsset<T>(string assetPath) where T:UObject
         {
@@ -100,6 +113,14 @@ namespace Saltyfish.Resource
         {
             m_IsDisposed = true;
             m_AssetDic.Clear();
+        }
+
+        public static void DisposeAllCache()
+        {
+            foreach(var cache in m_AllCache.Values)
+            {
+                cache.Dispose();
+            }
         }
     }
 }

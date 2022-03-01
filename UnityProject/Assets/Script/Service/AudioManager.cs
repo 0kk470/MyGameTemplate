@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Saltyfish.Resource;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -7,13 +9,21 @@ namespace Saltyfish.Audio
 {
     public class AudioManager : ManagerBase<AudioManager>
     {
+        public static event Action<float> OnMasterVolumeChange;
+
+        public static event Action<float> OnMusicVolumeChange; 
+
+        public static event Action<float> OnSfxVolumeChange; 
+
+        public static event Action<bool> OnMasterVolumeMute;  
+
+        private const string AudioCacheName = "AudioCache";
+
         [SerializeField]
         private string m_AudioSourcePrefabPath = "Prefabs/Audio/SoundEffect";
 
         [SerializeField]
         private AudioSource bgmAudioSource;
-
-        private Dictionary<string, AudioClip> m_CachedClips = new Dictionary<string, AudioClip>();
 
         // All activated SFX audio sources in scene
         private List<AudioSource> sfxAudioSources = new List<AudioSource>();
@@ -47,6 +57,7 @@ namespace Saltyfish.Audio
             {
                 if (globalVolume == value) return;
                 globalVolume = value;
+                OnMasterVolumeChange?.Invoke(globalVolume);
                 UpdateAllAudioSources();
             }
         }
@@ -58,6 +69,7 @@ namespace Saltyfish.Audio
             {
                 if (bgmVolume == value) return;
                 bgmVolume = value;
+                OnMusicVolumeChange?.Invoke(bgmVolume);
                 UpdateBGMAudioSource();
             }
         }
@@ -69,6 +81,7 @@ namespace Saltyfish.Audio
             {
                 if (sfxVolume == value) return;
                 sfxVolume = value;
+                OnSfxVolumeChange?.Invoke(sfxVolume);
                 UpdateSFXAudioSources();
             }
         }
@@ -80,6 +93,7 @@ namespace Saltyfish.Audio
             {
                 if (isMute == value) return;
                 isMute = value;
+                OnMasterVolumeMute?.Invoke(isMute);
                 UpdateMute();
             }
         }
@@ -115,16 +129,14 @@ namespace Saltyfish.Audio
         }
 
 
-        /// <summary>
-        /// Binding Inspector upadtes to Audio Sources
-        /// </summary>
+#if UNITY_EDITOR
         void OnValidate()
         {
             UpdateAllAudioSources();
             UpdateMute();
             UpdateLoop();
         }
-
+#endif
         private void UpdateAllAudioSources()
         {
             UpdateBGMAudioSource();
@@ -185,7 +197,7 @@ namespace Saltyfish.Audio
         private void UpdateLoop()
         {
             if(bgmAudioSource != null)
-               bgmAudioSource.loop= isLoop;
+               bgmAudioSource.loop = isLoop;
         }
 
         #endregion
@@ -203,7 +215,7 @@ namespace Saltyfish.Audio
         }
         public void PlayBGM(string path, bool loop = true, float volume = -1)
         {
-            var clip = GetClipFromPath(path);
+            var clip = AssetCache.Get(AudioCacheName).GetAsset<AudioClip>(path);
             if (clip != null)
             {
                 PlayBGM(clip, loop, volume);
@@ -243,16 +255,7 @@ namespace Saltyfish.Audio
             }
         }
 
-        /// <summary>
-        /// Attach SFX to game object and play one time
-        /// </summary>
-        /// <param name="clip">Audio clip</param>
-        /// <param name="component">The component to attach to</param>
-        /// <param name="volume"></param>
-        /// <param name="is3D">Is 3D audio or not</param>
-        /// <param name="callback">Callback function once the SFX is played</param>
-        /// <param name="callbackWaitSec">How</param>
-        public void PlaySFXOneShot(AudioClip clip, Vector3 position = default, Transform parent = null, float volume = 1, bool is3D = true, UnityAction callback = null, float callbackWaitSec = 0)
+        public void PlayOneShot(AudioClip clip, Vector3 position = default, Transform parent = null, float volume = 1, bool is3D = false, UnityAction callback = null, float callbackWaitSec = 0)
         {
             // Initialize audio source
             AudioSource audioSource = GetSFXAudioSource(is3D);
@@ -269,31 +272,14 @@ namespace Saltyfish.Audio
             }
         }
 
-        public void PlaySFXOneShot(string path, Vector3 position = default, Transform parent = null, float volume = 1, bool is3D = false, UnityAction callback = null, float callbackWaitSec = 0)
+        public void PlayOneShot(string path, Vector3 position = default, Transform parent = null, float volume = 1, bool is3D = false, UnityAction callback = null, float callbackWaitSec = 0)
         {
-            var clip = GetClipFromPath(path);
+            var clip = AssetCache.Get(AudioCacheName).GetAsset<AudioClip>(path);
             if(clip != null)
             {
-                PlaySFXOneShot(clip, position, parent, volume, is3D, callback, callbackWaitSec);
+                PlayOneShot(clip, position, parent, volume, is3D, callback, callbackWaitSec);
             }
         }
         #endregion
-        public AudioClip GetClipFromPath(string path)
-        {
-            if(string.IsNullOrEmpty(path))
-            {
-                Debug.LogError("Empty Path");
-                return null;
-            }
-            if(!m_CachedClips.TryGetValue(path, out AudioClip clip))
-            {
-                clip = Resources.Load<AudioClip>(path);
-                if(clip != null)
-                {
-                    m_CachedClips.Add(path, clip);
-                }
-            }
-            return clip;
-        }
     }
 }

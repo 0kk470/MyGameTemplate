@@ -215,7 +215,7 @@ namespace Saltyfish.Audio
         }
         public void PlayBGM(string path, bool loop = true, float volume = -1)
         {
-            var clip = AssetCache.Get(AudioCacheName).GetAsset<AudioClip>(path);
+            var clip = AssetCache.GetCache(AudioCacheName).GetAsset<AudioClip>(path);
             if (clip != null)
             {
                 PlayBGM(clip, loop, volume);
@@ -274,7 +274,7 @@ namespace Saltyfish.Audio
 
         public void PlayOneShot(string path, Vector3 position = default, Transform parent = null, float volume = 1, bool is3D = false, UnityAction callback = null, float callbackWaitSec = 0)
         {
-            var clip = AssetCache.Get(AudioCacheName).GetAsset<AudioClip>(path);
+            var clip = AssetCache.GetCache(AudioCacheName).GetAsset<AudioClip>(path);
             if(clip != null)
             {
                 PlayOneShot(clip, position, parent, volume, is3D, callback, callbackWaitSec);

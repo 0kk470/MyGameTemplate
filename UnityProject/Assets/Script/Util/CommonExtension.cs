@@ -129,6 +129,24 @@ namespace Saltyfish.Util
             sb.AppendFormat(" Size: {0}", cnt);
             Debug.Log(sb);
         }
+
+        public static List<T> ToList<T>(this T[,] array)
+        {
+            if(array == null)
+                return null;
+            int width = array.GetLength(0);
+            int height = array.GetLength(1);
+            var result = new List<T>(width * height);
+
+            for (int w = 0; w < width; w++)
+            {
+                for (int h = 0; h < height; h++)
+                {
+                    result.Add(array[w,h]);
+                }
+            }
+            return result;
+        }
         #endregion
 
         public static float ToPercent(this float val)

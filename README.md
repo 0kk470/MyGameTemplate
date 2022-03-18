@@ -4,18 +4,22 @@ A simple game template for quick development in gamejam.
 
 # functionality 
 
+* [Resource Cache](https://github.com/0kk470/MyGameTemplate/tree/master/UnityProject/Assets/Script/ResourceManagement)
 
-* Resource Cache
-
-* Simple GameObjectPool
+* [Simple GameObjectPool](https://github.com/0kk470/MyGameTemplate/tree/master/UnityProject/Assets/Script/Util/ObjectPool)
    
   Use asset path directly to instantiate gameoject. 
 
-* UI Management
+* [UI Management](https://github.com/0kk470/MyGameTemplate/blob/master/UnityProject/Assets/Script/Service/UIManager.cs)
 
 * Excel Configuration
 
-* Audio
+  Intergrate [Luban Tool](https://github.com/focus-creative-games/luban)
 
+* [AudioManager](https://github.com/0kk470/MyGameTemplate/blob/master/UnityProject/Assets/Script/Service/AudioManager.cs)
 
-* Game Event Dispatcher 
+* [Generic GameEvent Dispatcher](https://github.com/0kk470/MyGameTemplate/tree/master/UnityProject/Assets/Script/Service/Event) 
+
+* [Timer](https://github.com/0kk470/MyGameTemplate/tree/master/UnityProject/Assets/Script/Util/Timer) 
+
+  Inspired by [UnityTimer](https://github.com/akbiggs/UnityTimer))

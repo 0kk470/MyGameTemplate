@@ -24,6 +24,14 @@ namespace Saltyfish.Util
             }
         }
 
+        public static void SetTransformActive(this Component comp, bool bActive)
+        {
+            if (comp != null)
+            {
+                comp.transform.localScale = bActive ? Vector3.one : Vector3.zero;
+            }
+        }
+
         public static GameObject FindChild(this GameObject pParent, string strFindName)
         {
             if (pParent == null)

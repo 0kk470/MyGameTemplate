@@ -35,7 +35,7 @@ namespace Saltyfish.Resource
             return new AssetCache(cacheName);
         }
 
-        public static AssetCache Get(string cacheName)
+        public static AssetCache GetCache(string cacheName)
         {
             if(!m_AllCache.TryGetValue(cacheName, out AssetCache result))
             {
@@ -43,6 +43,11 @@ namespace Saltyfish.Resource
                 m_AllCache.Add(cacheName, result);
             }
             return result;
+        }
+
+        public static AssetCache GetCache<T>() where T:UnityEngine.Object
+        {
+            return GetCache(nameof(T));
         }
 
 

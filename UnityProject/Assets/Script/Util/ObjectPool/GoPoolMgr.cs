@@ -227,7 +227,7 @@ namespace Saltyfish.ObjectPool
         }
 
 
-        public static T CreateComponent<T>(string path, bool isActive = true, Transform parent = null, Vector3 localPosition = default(Vector3), int cacheNum = 1) where T : Component
+        public static T CreateComponent<T>(string path, Transform parent = null, Vector3 localPosition = default(Vector3), int cacheNum = 1) where T : Component
         {
             var pool = Instance.GetPoolByResourcePath(path, cacheNum);
             if (pool == null)
@@ -235,7 +235,6 @@ namespace Saltyfish.ObjectPool
             var comp = Instance.GetComponentFromPool<T>(path);
             if (comp != null)
             {
-                comp.gameObject.BetterSetActive(isActive);
                 comp.transform.SetParent(parent, false);
                 comp.transform.localPosition = localPosition;
             }

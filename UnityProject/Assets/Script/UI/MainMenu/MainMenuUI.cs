@@ -49,7 +49,7 @@ namespace Saltyfish.UI
         {
             if (GameManager.IsRestartingGame)
                 return;
-            Audio.AudioManager.Instance.PlaySFXOneShot("Audio/Sound/click");
+            Audio.AudioManager.Instance.PlayOneShot("Audio/Sound/click");
             GameManager.StartGame();
         }
 
@@ -57,7 +57,7 @@ namespace Saltyfish.UI
         {
             if (GameManager.IsRestartingGame)
                 return;
-            Audio.AudioManager.Instance.PlaySFXOneShot("Audio/Sound/click");
+            Audio.AudioManager.Instance.PlayOneShot("Audio/Sound/click");
             MessageBox.ShowMessage("TODO");
         }
 
@@ -65,7 +65,7 @@ namespace Saltyfish.UI
         {
             if (GameManager.IsRestartingGame)
                 return;
-            Audio.AudioManager.Instance.PlaySFXOneShot("Audio/Sound/click");
+            Audio.AudioManager.Instance.PlayOneShot("Audio/Sound/click");
             MessageBox.ShowMessage("确定要退出游戏吗?",
                 () =>
                 {

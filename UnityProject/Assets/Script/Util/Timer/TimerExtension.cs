@@ -16,7 +16,7 @@ namespace Saltyfish.Util
         }
 
 
-        public static Timer CountDown(this MonoBehaviour mono, float duration, Action<float> onUpdateSecond = null, Action onComplete = null)
+        public static Timer CountDown(this MonoBehaviour mono, float duration, Action<float, float> onUpdateSecond = null, Action onComplete = null)
         {
             return Timer.Register(duration, onComplete, null, onUpdateSecond, false, mono);
         }

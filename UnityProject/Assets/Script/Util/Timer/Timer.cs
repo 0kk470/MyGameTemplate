@@ -19,7 +19,7 @@ namespace Saltyfish.Util
         public bool IsOwnerDestroyed => this.m_IsAttached && this.m_AttachObject == null;
         private Action _onComplete;
         private Action<float> _OnFrame;
-        private Action<float> _OnElapsedSecond;
+        private Action<float, float> _OnElapsedSecond;
         private float m_BeginTime;
         private float _secondTriggerTime;
         private bool _isScaleTime;
@@ -39,7 +39,7 @@ namespace Saltyfish.Util
         public static Timer Register(float duration,
             Action onComplete = null,
             Action<float> onUpdateFrame = null,
-            Action<float> onUpdateSecond = null,
+            Action<float, float> onUpdateSecond = null,
             bool isLooped = false,
             MonoBehaviour attachedObject = null,
             bool isScaleTime = false)
@@ -77,7 +77,7 @@ namespace Saltyfish.Util
             return Register(duration, onComplete, null, null, true);
         }
 
-        public static Timer CountDown(float duration, Action<float> onElapsedSecond = null, Action onComplete = null)
+        public static Timer CountDown(float duration, Action<float, float> onElapsedSecond = null, Action onComplete = null)
         {
             return Register(duration, onComplete, null, onElapsedSecond);
         }
@@ -113,6 +113,14 @@ namespace Saltyfish.Util
             return this;
         }
 
+        public Timer SetIsScaleTime(bool isScaleTime)
+        {
+            _isScaleTime = isScaleTime;
+            m_BeginTime = NowTime();
+            _secondTriggerTime = m_BeginTime;
+            return this;
+        }
+
         public void Pause()
         {
             _isPaused = true;
@@ -124,7 +132,7 @@ namespace Saltyfish.Util
         }
 
 
-        private float GetBeginTime()
+        private float GetEndTime()
         {
             return m_BeginTime + Duration;
         }
@@ -158,7 +166,7 @@ namespace Saltyfish.Util
             float CurrentTime = NowTime();
             float fElapsedSeconds = ElapsedSeconds();
 
-            if (Duration >= 0 && CurrentTime >= GetBeginTime())
+            if (Duration >= 0 && CurrentTime >= GetEndTime())
             {
                 _onComplete?.Invoke();
 
@@ -178,7 +186,7 @@ namespace Saltyfish.Util
             if (CurrentTime - _secondTriggerTime >= 1)
             {
                 _secondTriggerTime = CurrentTime;
-                _OnElapsedSecond?.Invoke(fElapsedSeconds);
+                _OnElapsedSecond?.Invoke(fElapsedSeconds, Duration);
             }
         }
     }

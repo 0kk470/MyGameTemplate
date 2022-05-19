@@ -1,0 +1,177 @@
+[
+  {
+    "languageKey": "food/name/hot_dog",
+    "Chinese": "烤肠",
+    "English": "Hotdog"
+  },
+  {
+    "languageKey": "food/name/bacon_belly",
+    "Chinese": "五花肉",
+    "English": "Bacon_belly"
+  },
+  {
+    "languageKey": "food/name/beef",
+    "Chinese": "牛肉",
+    "English": "Beef"
+  },
+  {
+    "languageKey": "food/name/squid",
+    "Chinese": "鱿鱼",
+    "English": "Squid"
+  },
+  {
+    "languageKey": "food/name/leek",
+    "Chinese": "韭菜",
+    "English": "Leek"
+  },
+  {
+    "languageKey": "food/name/shrimp",
+    "Chinese": "虾仁",
+    "English": "Shrimp"
+  },
+  {
+    "languageKey": "food/name/chickenwing",
+    "Chinese": "鸡翅",
+    "English": "Chickenwing"
+  },
+  {
+    "languageKey": "food/name/mutton",
+    "Chinese": "羊肉串",
+    "English": "Mutton"
+  },
+  {
+    "languageKey": "food/name/onion",
+    "Chinese": "洋葱",
+    "English": "Onion"
+  },
+  {
+    "languageKey": "food/name/eggplant",
+    "Chinese": "茄子",
+    "English": "Eggplant"
+  },
+  {
+    "languageKey": "food/name/mushroom",
+    "Chinese": "香菇",
+    "English": "Mushroom"
+  },
+  {
+    "languageKey": "food/name/needle_mushroom",
+    "Chinese": "金针菇",
+    "English": "NeedleMushroom"
+  },
+  {
+    "languageKey": "food/name/tofu_skin",
+    "Chinese": "豆皮",
+    "English": "TofuSkin"
+  },
+  {
+    "languageKey": "food/name/corn",
+    "Chinese": "玉米",
+    "English": "Corn"
+  },
+  {
+    "languageKey": "food/name/tofu",
+    "Chinese": "鱼豆腐",
+    "English": "Tofu"
+  },
+  {
+    "languageKey": "food/name/unknownfood",
+    "Chinese": "未知食物",
+    "English": "unknown"
+  },
+  {
+    "languageKey": "ui/map/restaurant_enter",
+    "Chinese": "进店",
+    "English": "Enter"
+  },
+  {
+    "languageKey": "ui/map/restaurant_closed",
+    "Chinese": "去过了",
+    "English": "Closed"
+  },
+  {
+    "languageKey": "ui/gameover/title",
+    "Chinese": "游戏结束",
+    "English": "Game Over"
+  },
+  {
+    "languageKey": "ui/gameover/score",
+    "Chinese": "你的分数 : \u003Ccolor=#E76895\u003E{0}\u003C/color\u003E",
+    "English": "Your Score : \u003Ccolor=#E76895\u003E{0}\u003C/color\u003E"
+  },
+  {
+    "languageKey": "ui/street/dayformat",
+    "Chinese": "第 \u003Ccolor=yellow\u003E{0}\u003C/color\u003E 天",
+    "English": "Day \u003Ccolor=yellow\u003E{0}\u003C/color\u003E"
+  },
+  {
+    "languageKey": "restaurant/trashbucket/name",
+    "Chinese": "垃圾桶",
+    "English": "Trash"
+  },
+  {
+    "languageKey": "ui/gamestart/story",
+    "Chinese": "经过不懈的努力，你终于追到了自己心仪的女孩子。\n她是一个吃货，非常喜欢各式各样的美食，尤其偏爱烧烤。\n假期将至，你决定花几天时间带她吃遍你家附近的烧烤店，巩固一下感情。",
+    "English": ""
+  },
+  {
+    "languageKey": "ui/rank/refresh",
+    "Chinese": "刷新",
+    "English": "Refresh"
+  },
+  {
+    "languageKey": "ui/rank/refresh_fmt",
+    "Chinese": "刷新({0}秒)",
+    "English": "Refresh({0}s)"
+  },
+  {
+    "languageKey": "ui/rank/myrank_fmt",
+    "Chinese": "我的排名 : {0}",
+    "English": "My Rank : {1}"
+  },
+  {
+    "languageKey": "ui/rank/norank",
+    "Chinese": "未上榜",
+    "English": "No Rank"
+  },
+  {
+    "languageKey": "ui/rank/getscorefail",
+    "Chinese": "获取排行榜数据失败",
+    "English": "Error, Fail to fetch leaderboard data."
+  },
+  {
+    "languageKey": "ui/rank/uploadscorefail",
+    "Chinese": "上传分数失败\n请检查网络后重试",
+    "English": "Error, Fail to upload your score.\nCheck your network and retry it later."
+  },
+  {
+    "languageKey": "ui/rank/leaderboard",
+    "Chinese": "排行榜",
+    "English": "LeaderBoard"
+  },
+  {
+    "languageKey": "ui/leave/nomedal",
+    "Chinese": "无任何奖牌",
+    "English": "No any medal"
+  },
+  {
+    "languageKey": "msg/steam/initfail",
+    "Chinese": "初始化Steam失败\n成就和排行榜功能可能会出现异常\n请检查网络或者Steam是否正常启动",
+    "English": "Initialize Steam Failed.\nRank and achievement system will be disabled.\nPlease check if steam or network is available."
+  },
+  {
+    "languageKey": "msg/steam/score_nochange",
+    "Chinese": "上传分数成功\n你的排名未发生变化",
+    "English": "Submit your score successfully.\nYour rank has no change."
+  },
+  {
+    "languageKey": "msg/steam/score_change",
+    "Chinese": "上传分数成功\n旧分数排名: {0}\n新分数排名: \u003Ccolor=red\u003E {1} \u003C/color\u003E",
+    "English": "Submit your score successfully.\nPrevious Rank: {0}\nCurrent Rank: \u003Ccolor=red\u003E {1} \u003C/color\u003E"
+  },
+  {
+    "languageKey": "ui/pause/menu_confirm",
+    "Chinese": "确认返回主菜单?",
+    "English": "Go back to main menu ?"
+  }
+]

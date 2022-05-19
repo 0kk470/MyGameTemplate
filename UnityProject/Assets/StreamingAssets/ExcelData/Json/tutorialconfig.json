@@ -1,0 +1,32 @@
+[
+  {
+    "TutorialId": 1,
+    "Title": {
+      "key": "/tutorial/title/tutorial1",
+      "text": "教程1"
+    },
+    "StepList": [
+      {
+        "texturePath": "Sprites/Tutorial/Tutorial1/Step1",
+        "description": {
+          "key": "tutorial/tutorial1/description1",
+          "text": "教程描述1"
+        }
+      },
+      {
+        "texturePath": "Sprites/Tutorial/Tutorial1/Step2",
+        "description": {
+          "key": "tutorial/tutorial1/description2",
+          "text": "教程描述2"
+        }
+      },
+      {
+        "texturePath": "Sprites/Tutorial/Tutorial1/Step3",
+        "description": {
+          "key": "tutorial/tutorial1/description3",
+          "text": "教程描述3"
+        }
+      }
+    ]
+  }
+]

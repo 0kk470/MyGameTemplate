@@ -1,0 +1,13 @@
+{
+  "MainMenu": "Audio/Music/MainMenu",
+  "Street": "Audio/Music/Street",
+  "bbq": "Audio/Sound/bbq",
+  "click": "Audio/Sound/click",
+  "click2": "Audio/Sound/click2",
+  "CountDown": "Audio/Sound/CountDown",
+  "GameWin": "Audio/Sound/GameWin",
+  "MedalScore": "Audio/Sound/MedalScore",
+  "ScoreDown": "Audio/Sound/ScoreDown",
+  "ScoreUp": "Audio/Sound/ScoreUp",
+  "throw_trash": "Audio/Sound/throw_trash"
+}

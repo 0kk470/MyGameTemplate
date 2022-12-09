@@ -22,4 +22,9 @@ namespace Saltyfish.ObjectPool
         /// </summary>
         void OnRecycle();
     }
+
+    public interface IPoolBinder
+    {
+        string PoolName { get; set; }
+    }
 }

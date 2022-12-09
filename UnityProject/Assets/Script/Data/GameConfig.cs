@@ -45,4 +45,9 @@ namespace Saltyfish.Data
         public const string TutorialTexture = "TutorialTexture";
 
     }
+
+    public class GameConfig
+    {
+        public const int NO_ENTITY_ID = -1;
+    }
 }

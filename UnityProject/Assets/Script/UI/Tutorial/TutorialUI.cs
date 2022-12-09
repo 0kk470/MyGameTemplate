@@ -110,7 +110,7 @@ namespace Saltyfish.UI
             if (step == null)
                 return;
             m_Description.text = step.Description;
-            m_TutorialImg.sprite = AssetCache.GetCache(CacheName.TutorialTexture).GetAsset<Sprite>(step.TexturePath);
+            m_TutorialImg.sprite = AssetCache.LoadAsset<Sprite>(step.TexturePath);
         }
 
 

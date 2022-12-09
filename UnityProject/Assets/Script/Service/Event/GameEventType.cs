@@ -13,5 +13,64 @@ namespace Saltyfish.Event
     {
 
         OnGameLaunch,
+        OnUnitHpChanged,
+        OnUnitRecoverHp,
+        OnUnitDamaged,
+        OnUnitDead,
+        OnUnitAllDelete,
+        OnUnitAdd,
+        OnUnitDelete,
+        OnUnitRespawn,
+        OnTeamUnitAdd,
+        OnTeamUnitDelete,
+        OnTowerUnitAdd,
+        OnTowerUnitDelete,
+        OnTeamOrTowerUnitDead,
+
+        OnEnemyAliveCountChange,
+
+        OnInteractBegin,
+        OnInteractEnd,
+
+        //Skill in battle
+        OnPlayerCastSkillCD,
+        OnPlayerGetSkill,
+        OnPlayerLoseSkill,
+        OnControllerChange,
+
+        //Skill in bag
+        OnUpgradeSkill,
+        OnGetSkillInBag,
+        OnLoseSkillInBag,
+        OnEquipSkill,
+        OnUnEquipSkill,
+        OnEquipedSkillReplaced,
+
+        //Recruit
+        OnGetShip,
+        OnLoseShip,
+        OnUpdateShip,
+        OnRenameShip,
+        OnShipPropertyItemSelect,
+
+        //Placement
+        OnShipFollowed,
+        OnShipUnFollowed,
+        OnFollowedShipReplaced,
+        OnShipTowerReplaced,
+        OnShipTowerAdd,
+        OnShipTowerRemove,
+        OnCloseTowerBuilder,
+
+        //Currency
+        OnCurrencyChange,
+
+        //Upgradable
+        OnPlayerSupportUpgrade,
+
+        OnBasementStoredHpChange,
+
+        //GameEvent
+        OnLeaveBattle,
     }
 }

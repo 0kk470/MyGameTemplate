@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DG.Tweening;
 using Saltyfish.Resource;
 using UnityEngine;
@@ -44,16 +45,17 @@ namespace Saltyfish.Audio
 
         public static event Action<bool> OnMasterVolumeMute;  
 
-        private const string AudioCacheName = "AudioCache";
-
         [SerializeField]
         private string m_AudioSourcePrefabPath = "Prefabs/Audio/SoundEffect";
 
         [SerializeField]
         private AudioSource bgmAudioSource;
 
+        [SerializeField]
         // All activated SFX audio sources in scene
-        private List<AudioSource> sfxAudioSources = new List<AudioSource>();
+        private List<SoundEffect> m_Sfxs = new List<SoundEffect>();
+
+        private ObjectPool.ObjPool<SoundEffect> m_SoundPool = new ObjectPool.ObjPool<SoundEffect>(100);
 
         #region Volume and audio source control
         [SerializeField]
@@ -178,15 +180,15 @@ namespace Saltyfish.Audio
 
         private void UpdateSFXAudioSources()
         {
-            for (int i = sfxAudioSources.Count - 1; i >= 0; i--)
+            for (int i = m_Sfxs.Count - 1; i >= 0; i--)
             {
-                if (sfxAudioSources[i] != null)
+                if (m_Sfxs[i].audioSource != null)
                 {
-                    SetSFX(sfxAudioSources[i]);
+                    SetSFX(m_Sfxs[i].audioSource);
                 }
                 else
                 {
-                    sfxAudioSources.RemoveAt(i);
+                    m_Sfxs.RemoveAt(i);
                 }
             }
         }
@@ -258,7 +260,9 @@ namespace Saltyfish.Audio
 
         public void PlayBGM(string path, bool loop = true, float volume = -1)
         {
-            var clip = AssetCache.GetCache(AudioCacheName).GetAsset<AudioClip>(path);
+            if (string.IsNullOrEmpty(path))
+                return;
+            var clip = AssetCache.LoadAsset<AudioClip>(path);
             if (clip != null)
             {
                 PlayBGM(clip, loop, volume);
@@ -270,7 +274,7 @@ namespace Saltyfish.Audio
             TweenCallback onComplete = () => PlayBGM(path, loop, volume);
             DOVirtual.Float(1, 0, crossFadeDuration,
                 (vol) => bgmAudioSource.volume = bgmVolume * globalVolume * vol)
-                .SetEase(ease).onComplete = onComplete;
+                .SetEase(ease).SetUpdate(true).onComplete = onComplete;
         }
         #endregion
 
@@ -280,59 +284,97 @@ namespace Saltyfish.Audio
         /// </summary>
         /// <param name="is3D">Is 3D audio or not</param>
         /// <returns></returns>
-        private AudioSource GetSFXAudioSource(bool is3D = true)
+        private SoundEffect GetNewSoundEffect(bool is3D = true)
         {
-            AudioSource audioSource = ObjectPool.GoPoolMgr.CreateComponent<AudioSource>(m_AudioSourcePrefabPath);
-            SetSFX(audioSource, is3D ? 1f : 0f);
-            sfxAudioSources.Add(audioSource);
-            return audioSource;
+            var sfx = m_SoundPool.Get();
+            sfx.audioSource = ObjectPool.GoPoolMgr.CreateComponent<AudioSource>(m_AudioSourcePrefabPath);
+            SetSFX(sfx.audioSource, is3D ? 1f : 0f);
+            m_Sfxs.Add(sfx);
+            return sfx;
         }
         /// <summary>
         /// Recycle SFX audio source
         /// </summary>
-        private void RecycleSFXAudioSource(AudioSource audioSource, AudioClip clip, UnityAction callback, float callbackWaitSec)
+        private void RecycleSoundEffect(SoundEffect soundEffect, Action onComplete)
         {
-            StartCoroutine(DoRecycleSFXAudioSource(audioSource, clip, callback, callbackWaitSec));
+            StartCoroutine(Co_RecycleSoundEffect(soundEffect, onComplete));
         }
 
-        private IEnumerator DoRecycleSFXAudioSource(AudioSource audioSource, AudioClip clip, UnityAction callback, float callbackWaitSec)
+        private IEnumerator Co_RecycleSoundEffect(SoundEffect soundEffect, Action onComplete)
         {
-            yield return new WaitForSeconds(clip.length);
-            if (audioSource != null)
+            yield return new WaitForSeconds(soundEffect.Clip.length);
+            DoRecyleSfx(soundEffect);
+            onComplete?.Invoke();
+        }
+
+        private void DoRecyleSfx(SoundEffect sfx)
+        {
+            if (sfx.audioSource != null)
             {
-                ObjectPool.GoPoolMgr.RecycleComponent(audioSource, m_AudioSourcePrefabPath);
-                yield return new WaitForSeconds(callbackWaitSec);
-                callback?.Invoke();
+                ObjectPool.GoPoolMgr.RecycleComponent(sfx.audioSource, m_AudioSourcePrefabPath);
             }
+            sfx.audioSource = null;
+            sfx.Clip = null;
+            sfx.PlayTime = 0;
+            m_Sfxs.Remove(sfx);
+            m_SoundPool.Release(sfx);
         }
 
-        public void PlayOneShot(AudioClip clip, Vector3 position = default, Transform parent = null, float volume = 1, bool is3D = false, UnityAction callback = null, float callbackWaitSec = 0)
+        private void PlayOneShot(AudioClip clip, AudioParam param)
         {
-            // Initialize audio source
-            AudioSource audioSource = GetSFXAudioSource(is3D);
-            if(audioSource != null)
+            float NowTime = Time.time;
+            int sameCount = m_Sfxs.Count(sfx =>
             {
-                audioSource.transform.SetParent(parent);
-                audioSource.transform.localPosition = position;
+                return sfx.Clip == clip && (NowTime - sfx.PlayTime) <= param.timeToCountMax;
+            });
+            if (sameCount >= param.MaxPlayNum)
+                return;
+            // Initialize audio source
+            var soundEffect = GetNewSoundEffect(param.is3D);
+            soundEffect.Clip = clip;
+            if (soundEffect.audioSource != null)
+            {
+                soundEffect.audioSource.transform.localPosition = param.Position ;
 
                 // Call actual PlayOneShot function on SFX audio source
-                audioSource.PlayOneShot(clip, volume);
+                soundEffect.audioSource.PlayOneShot(clip, param.VolumeScale);
 
-                // Recycle audio source and callback
-                RecycleSFXAudioSource(audioSource, clip, callback, callbackWaitSec);
             }
+            soundEffect.PlayTime = NowTime;
+            RecycleSoundEffect(soundEffect, param.OnPlayComplete);
         }
 
-        public void PlayOneShot(string path, Vector3 position = default, Transform parent = null, float volume = 1, bool is3D = false, UnityAction callback = null, float callbackWaitSec = 0)
+        public void PlayOneShot(string path, Vector3 position = default, bool is3d = false, Action onComplete = null, int max_num = 2, float timeToCount = 0.1f)
         {
             if (string.IsNullOrEmpty(path))
                 return;
-            var clip = AssetCache.GetCache(AudioCacheName).GetAsset<AudioClip>(path);
+            var clip = AssetCache.LoadAsset<AudioClip>(path);
             if(clip != null)
             {
-                PlayOneShot(clip, position, parent, volume, is3D, callback, callbackWaitSec);
+                AudioParam param = new AudioParam();
+                param.VolumeScale = 1;
+                param.AudioClipPath = path;
+                param.Position = position;
+                param.MaxPlayNum = max_num;
+                param.timeToCountMax = timeToCount;
+                param.is3D = is3d;
+                param.OnPlayComplete = onComplete;
+                PlayOneShot(clip, param);
             }
         }
+
+        public void PlayOneShot(AudioParam param)
+        {
+            if (string.IsNullOrEmpty(param.AudioClipPath))
+                return;
+            var clip = AssetCache.LoadAsset<AudioClip>(param.AudioClipPath);
+            if (clip != null)
+            {
+                PlayOneShot(clip, param);
+            }
+        }
+
+
         #endregion
     }
 }

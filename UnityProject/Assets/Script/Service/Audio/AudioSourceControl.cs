@@ -14,6 +14,9 @@ namespace Saltyfish.Audio
         [SerializeField]
         private AudioSource m_AudioSource;
 
+        public bool IsPlaying => m_AudioSource?.isPlaying ?? false;
+
+
         private void Awake()
         {
             if(m_AudioSource == null)
@@ -30,6 +33,11 @@ namespace Saltyfish.Audio
         {
             if (m_PlayOnEnable)
                 Play();
+        }
+
+        private void OnDisable()
+        {
+            
         }
 
 

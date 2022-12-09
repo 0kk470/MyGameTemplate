@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Saltyfish.ObjectPool;
+using Saltyfish.Resource;
 using UnityEngine;
 
 namespace Saltyfish.Util
@@ -35,7 +36,7 @@ namespace Saltyfish.Util
         {
             if (string.IsNullOrEmpty(templatePath))
                 return;
-            var prefab = Resources.Load<GameObject>(templatePath);
+            var prefab = AssetCache.LoadAsset<GameObject>(templatePath);
             if(prefab == null)
             {
                 Debug.LogError(templatePath + " is not valid");
@@ -43,7 +44,7 @@ namespace Saltyfish.Util
             GenerateMonoElements(prefab, dataList, parent, CreateElementCallback);
         }
 
-        public static void GenerateMonoElementsWithPool<T, data>(string templatePath, IList<data> dataList, Transform parent = null, Action<int, T, data> CreateElementCallback = null) where T : Component, ICollectable
+        public static void GeneratePoolElements<T, data>(string templatePath, IList<data> dataList, Transform parent = null, Action<int, T, data> CreateElementCallback = null) where T : Component, ICollectable
         {
             if (string.IsNullOrEmpty(templatePath))
                 return;
@@ -59,10 +60,28 @@ namespace Saltyfish.Util
             }
         }
 
+        public static System.Collections.IEnumerator GeneratePoolElementsAsync<T, data>(string templatePath, IList<data> dataList, Transform parent = null, Action<int, T, data> CreateElementCallback = null, Action onComplete = null, float delta = 0f)
+where T : Component, IDataContainer<data>
+        {
+            bool isValid = dataList != null;
+            int index = 0;
+            var waitTime = delta > 0 ? new WaitForSecondsRealtime(delta) : null;
+            while (isValid && index < dataList.Count)
+            {
+                var component = GoPoolMgr.CreateComponent<T>(templatePath, parent);
+                component.transform.localScale = Vector3.one;
+                CreateElementCallback?.Invoke(index, component, dataList[index]);
+                component?.SetData(dataList[index]);
+                ++index;
+                yield return waitTime;
+            }
+            onComplete?.Invoke();
+        }
+
         public static System.Collections.IEnumerator GenerateMonoElementsAsync<T, data>(string templatePath, IList<data> dataList, Transform parent = null, Action<int, T, data> CreateElementCallback = null, Action onComplete = null, float delta = 0f)
         where T : Component,IDataContainer<data>
         {
-            var prefab = Resources.Load<GameObject>(templatePath);
+            var prefab = AssetCache.LoadAsset<GameObject>(templatePath);
             if (prefab == null)
             {
                 Debug.LogError(templatePath + " is not valid");
@@ -135,7 +154,7 @@ namespace Saltyfish.Util
         {
             if (string.IsNullOrEmpty(templatePath))
                 return;
-            var prefab = Resources.Load<GameObject>(templatePath);
+            var prefab = AssetCache.LoadAsset<GameObject>(templatePath);
             if (prefab == null)
             {
                 Debug.LogError(templatePath + " is not valid");

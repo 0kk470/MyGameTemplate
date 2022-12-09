@@ -1,4 +1,6 @@
-﻿using Saltyfish.Util;
+﻿using Cysharp.Threading.Tasks;
+using Saltyfish.Resource;
+using Saltyfish.Util;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,8 +17,8 @@ namespace Saltyfish.UI
         Lowest = 10,
         Bottom = 50,
         Middle = 100,
-        Tutorial = 110,
         Top = 500,
+        Tutorial = 510,
         Tip = 1000,
         Curtain = 9999,
     }
@@ -100,15 +102,11 @@ namespace Saltyfish.UI
         {
             Debug.Log("Open:" + name);
             UIBase ui;
-            if (m_UIdic.TryGetValue(name, out ui))
-            {
-                ui.Show();
-            }
-            else
+            if (!m_UIdic.TryGetValue(name, out ui))
             {
                 if (UIConfig.UIPath.TryGetValue(name, out UIConfig.UIConfigParams config))
                 {
-                    var go = Resources.Load<GameObject>(config.Path);
+                    var go = AssetCache.LoadAsset<GameObject>(config.Path);
                     if (go != null)
                     {
                         Transform parent = null;
@@ -117,18 +115,32 @@ namespace Saltyfish.UI
                         ui = uiObj.GetComponent<UIBase>();
                         ui.uiName = name;
                         ui.Layer = config.Layer;
+                        ui.UpdateEveryFrame = config.FrameUpdate;
                         m_UIdic.Add(name, ui);
                     }
-                    ui.Show();
                 }
                 else
                 {
                     Debug.LogError("No UI Config, UIName:" + name);
                 }
             }
+            if(ui != null)
+            {
+                ui.Show();
+            }
             return ui;
         }
 
+        public void MoveUIToLayer(string uiName, UILayer uiLayer)
+        {
+            var ui = GetUI(uiName);
+            var newParent = GetLayer(uiLayer);
+            if (ui == null || newParent == null)
+                return;
+            ui.transform.SetParent(newParent);
+            ui.transform.SetAsLastSibling();
+        }
+        
         public UIBase GetUI(string name)
         {
             m_UIdic.TryGetValue(name, out UIBase ui);
@@ -195,7 +207,7 @@ namespace Saltyfish.UI
         {
             if (names == null || names.Length == 0)
                 return false;
-            return Array.Exists(names, (nameFind) => { return uiName == nameFind; });
+            return Array.Exists(names, nameFind => uiName == nameFind);
         }
 
         public void RemoveUI(string name)
@@ -206,6 +218,22 @@ namespace Saltyfish.UI
             {
                 m_UIdic.Remove(name);
             }
+        }
+
+        public void OnUpdate(float deltaTime)
+        {
+            foreach(var ui in m_UIdic.Values)
+            {
+               if(ui.UpdateEveryFrame)
+                {
+                    ui.OnUpdate(deltaTime);
+                }
+            }
+        }
+
+        public async UniTask WaitForUIClose(string uiName)
+        {
+            await UniTask.WaitUntil(() => !IsUIOpen(uiName));
         }
     }
 }

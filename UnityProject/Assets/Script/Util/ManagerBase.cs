@@ -5,6 +5,8 @@ using UnityEngine;
 public abstract class ManagerBase : MonoBehaviour
 {
     public virtual void Init() { }
+
+    public virtual void DeInit() { }
 }
 
 public abstract class ManagerBase<T> : ManagerBase where T:ManagerBase<T>

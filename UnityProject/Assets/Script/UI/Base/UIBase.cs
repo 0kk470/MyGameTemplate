@@ -1,5 +1,7 @@
+using Cysharp.Threading.Tasks;
 using Saltyfish.Util;
 using System.Collections;
+using System.Threading;
 using UnityEngine;
 
 namespace Saltyfish.UI
@@ -14,6 +16,8 @@ namespace Saltyfish.UI
 
         public UILayer Layer { get; set; }
 
+        public bool UpdateEveryFrame { get; set; } = false;
+
         public int Sibling
         {
             get
@@ -25,9 +29,12 @@ namespace Saltyfish.UI
 
         protected UIBase[] m_Childs;
 
+        //private IUIPanelInput m_UIPanelInput;
+
+
         protected virtual void Awake()
         {
-
+           // m_UIPanelInput = GetComponent<IUIPanelInput>();
         }
 
         protected virtual void Start()
@@ -50,7 +57,7 @@ namespace Saltyfish.UI
 
         protected virtual void OnShow()
         {
-
+            RegisterUIInput();
         }
 
         public void Show(bool needRefresh = true)
@@ -65,8 +72,38 @@ namespace Saltyfish.UI
 
         protected virtual void OnHide()
         {
-
+            UnRegisterUIInput();
         }
+
+        private Coroutine m_Co_DelayHide;
+        protected void DelayHide(float duration = 0.1f, bool isDestroy = false)
+        {
+            StopDelayHide();
+            m_Co_DelayHide = StartCoroutine(Co_DelayHide(duration, isDestroy));
+        }
+
+        protected void StopDelayHide()
+        {
+            if (m_Co_DelayHide != null)
+            {
+                StopCoroutine(m_Co_DelayHide);
+                m_Co_DelayHide = null;
+            }
+        }
+
+        protected IEnumerator Co_DelayHide(float duration, bool isDestroy)
+        {
+            yield return new WaitForSeconds(duration);
+            if (isDestroy)
+            {
+                Close();
+            }
+            else
+            {
+                Hide();
+            }
+        }
+
 
         public void Hide()
         {
@@ -75,11 +112,27 @@ namespace Saltyfish.UI
             OnHide();
         }
 
+        public virtual void OnUpdate(float deltaTime)
+        {
+            
+        }
+
+
         public void Close()
         {
             Hide();
             Destroy(gameObject);
             UIManager.Instance.RemoveUI(uiName);
+        }
+
+        private void RegisterUIInput()
+        {
+           //UIPanel_InputManager.Instance.AddInputControl(m_UIPanelInput);
+        }
+
+        private void UnRegisterUIInput()
+        {
+            //UIPanel_InputManager.Instance.RemoveInputControl(m_UIPanelInput);
         }
     }
 }
